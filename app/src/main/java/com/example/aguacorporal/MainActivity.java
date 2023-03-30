@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,15 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    //private SQLiteDatabase bancoCadastros;
-    private EditText textPeso;
-    private EditText textIdade;
+    public static EditText textPeso;
+    public static EditText textIdade;
     private TextView textResult;
     private Button buttonCalc;
     private ImageButton buttonClr;
     private ImageButton buttonHist;
-    private Button buttonCadastro;
-    private EditText textNome;
+    public static Button buttonCadastro;
+    public static EditText textNome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +64,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, CadastroActivity.class));
             }
         });
+
+        buttonCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cadastrarBanco();
+            }
+        });
+
     }
     public void calculaQTD(){
         if (TextUtils.isEmpty(textIdade.getText().toString()) || TextUtils.isEmpty(textPeso.getText().toString())){
-            Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Preencha a idade e o peso", Toast.LENGTH_LONG).show();
         }else {
             float peso = Float.parseFloat(textPeso.getText().toString());
             int idade = Integer.parseInt(textIdade.getText().toString());
@@ -89,5 +97,26 @@ public class MainActivity extends AppCompatActivity {
         textPeso.setText("");
         textIdade.setText("");
         textNome.setText("");
+    }
+
+    public void cadastrarBanco(){
+        if (TextUtils.isEmpty(textIdade.getText().toString()) || TextUtils.isEmpty(textPeso.getText().toString()) || TextUtils.isEmpty(textNome.getText().toString())){
+            Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_LONG).show();
+        }else {
+            try {
+                CadastroActivity.bancoCadastros = openOrCreateDatabase("cadastros", MODE_PRIVATE, null);
+                String inserir = "INSERT INTO atletas (nome, idade, peso) VALUES(?,?,?)";
+                SQLiteStatement stmt = CadastroActivity.bancoCadastros.compileStatement(inserir);
+
+                stmt.bindString(1, textNome.getText().toString());
+                stmt.bindString(1, textIdade.getText().toString());
+                stmt.bindString(1, textPeso.getText().toString());
+
+                stmt.executeInsert();
+                CadastroActivity.bancoCadastros.close();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 }

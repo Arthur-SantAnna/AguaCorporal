@@ -3,21 +3,24 @@ package com.example.aguacorporal;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 public class CadastroActivity extends AppCompatActivity {
 
-    private SQLiteDatabase bancoCadastros;
+    public static SQLiteDatabase bancoCadastros;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro);
 
-        //criarBanco();
+        criarBanco();
+
     }
 
-/*
     public void criarBanco(){
         try {
             bancoCadastros = openOrCreateDatabase("cadastros", MODE_PRIVATE, null);
@@ -32,7 +35,4 @@ public class CadastroActivity extends AppCompatActivity {
         }
     }
 
-    public void selectBanco(){
-
-    }*/
 }
